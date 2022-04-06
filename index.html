@@ -1,0 +1,290 @@
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style type="text/css">
+    body {
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      background-color: #000000;
+      color: #000000;
+      overflow: hidden;
+    }
+
+    .remote-video {
+      width: 100%;
+      height: 100%;
+      background-color: #000000;
+    }
+
+    .local-video {
+      width: 100%;
+      height: 100%;
+      border-radius: 10px;
+      background-color: #000000;
+      border: 2px solid #cddfe7;
+      box-shadow: 0px 2px 5px rgba(255, 255, 255, 0.8);
+    }
+
+    .local-video-container {
+      position: absolute;
+      background-color: #000000;
+      bottom: 40px;
+      right: 40px;
+      width: 300px;
+      height: 150px;
+      cursor: move;
+      z-index: 2;
+    }
+
+    .resizer {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      top: -5px;
+      left: -5px;
+      /* background-color: #ffffff; */
+      cursor: nw-resize;
+      z-index: 1;
+    }
+
+    .button-container {
+      position: absolute;
+      bottom: 40px;
+      left: 0;
+      right: 0;
+      margin-right: auto;
+      margin-left: auto;
+      display: flex;
+      justify-content: space-around;
+      width: 200px;
+      height: fit-content;
+    }
+
+    .end-call-button {
+      width: 60px;
+      height: 60px;
+      border-radius: 100%;
+      border: none;
+      padding: 0%;
+    }
+
+    .end-call-button:active {
+      opacity: 0.5;
+    }
+
+    .mute-button {
+      width: 60px;
+      height: 60px;
+      border-radius: 100%;
+      border: 2px solid #ffffff;
+      background-color: transparent;
+      padding: 10;
+    }
+
+    .mute-button:active {
+      opacity: 0.5;
+    }
+
+    .muted-line {
+      position: absolute;
+      height: 2px;
+      width: 80px;
+      background-color: #ffffff;
+      transform: rotate(-45deg);
+      top: 25px;
+      right: 9px;
+      border-radius: 10px;
+      border: 3px solid #000;
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <video autoplay class="remote-video" id="remote-video"></video>
+  <div class="local-video-container" id="local-video-container">
+    <div class="resizer" id="resizer"></div>
+    <video autoplay muted class="local-video" id="local-video"></video>
+  </div>
+  <div class="button-container">
+    <button class="end-call-button" id="end-call-button">
+      <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+        x="0px" y="0px" viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve"
+        width="60px" height="60px">
+        <ellipse style="fill:#E21B1B;" cx="256" cy="256" rx="256" ry="255.832" />
+        <rect x="331.753" y="288.52" transform="matrix(0.7879 -0.6158 0.6158 0.7879 -131.5202 286.6909)"
+          style="fill:#FFFFFF;" width="37.344" height="91.504" />
+        <path style="fill:#FFFFFF;" d="M348.696,393.736L292.344,321.6c-51.16-14.248-87.064-60.168-88.544-113.256l-56.352-72.096
+      		c0,0-53.392,76.488,30.4,183.64S348.696,393.736,348.696,393.736z" />
+        <rect x="186.814" y="103.169" transform="matrix(0.7879 -0.6158 0.6158 0.7879 -48.1226 158.1244)"
+          style="fill:#FFFFFF;" width="37.344" height="91.504" />
+      </svg>
+    </button>
+    <button class="mute-button" id="mute-button">
+      <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+        x="0px" y="0px" viewBox="0 0 64 64" enable-background="new 0 0 64 64" xml:space="preserve">
+        <path d="M32,40c6.0653992,0,11-5.0653992,11-11.2919998V11.2919998C43,5.0654998,38.0653992,0,32,0S21,5.0654998,21,11.2919998
+        v17.4160004C21,34.9346008,25.9346008,40,32,40z M23,11.2919998C23,6.1684999,27.0375996,2,32,2s9,4.1684999,9,9.2919998
+        v17.4160004C41,33.8316002,36.9623985,38,32,38s-9-4.1683998-9-9.2919998V11.2919998z" fill="white" />
+        <path d="M50,25c-0.5522041,0-1,0.4477997-1,1v3.6333008C49,39.2094994,41.3740005,47,32,47s-17-7.7905006-17-17.3666992V26
+      		c0-0.5522003-0.4477997-1-1-1s-1,0.4477997-1,1v3.6333008c0,10.3348007,7.9894009,18.780098,18,19.3149986V62H21
+      		c-0.5522003,0-1,0.4477997-1,1c0,0.5522995,0.4477997,1,1,1h22c0.5521965,0,1-0.4477005,1-1c0-0.5522003-0.4478035-1-1-1H33
+      		V48.9482994c10.0105972-0.5349007,18-8.9801979,18-19.3149986V26C51,25.4477997,50.5521965,25,50,25z"
+          fill="white" />
+      </svg>
+      <div class="muted-line" id="muted-line"></div>
+    </button>
+  </div>
+  <script>
+    window.addEventListener("DOMContentLoaded", () => {
+      const endCallButton = document.getElementById("end-call-button")
+      endCallButton.onclick = () => {
+        console.log("end call")
+      }
+      const mute = document.getElementById("mute-button")
+      const mutedLine = document.getElementById("muted-line")
+      mute.onclick = () => {
+        if (mutedLine.style.display === "" || mutedLine.style.display === "none")
+          mutedLine.style.display = "inline"
+        else
+          mutedLine.style.display = "none"
+
+        console.log("mute")
+      }
+      // container
+      const videoContainer = document.getElementById("local-video-container")
+      videoContainer.onmousedown = (e) => {
+        let shiftX = e.clientX - videoContainer.getBoundingClientRect().left
+        let shiftY = e.clientY - videoContainer.getBoundingClientRect().top
+
+        let maxWidth = window.innerWidth - videoContainer.offsetWidth - 20
+        let maxHeight = window.innerHeight - videoContainer.offsetHeight - 20
+
+        const move = ({ clientX, clientY }) => {
+          const left = clientX - shiftX
+          const top = clientY - shiftY
+          videoContainer.style.left = (left < 20 ? 20 : left > maxWidth ? maxWidth : left) + "px"
+          videoContainer.style.top = (top < 20 ? 20 : top > maxHeight ? maxHeight : top) + "px"
+        }
+
+        const mouseMoveHandler = (e) => {
+          e.preventDefault()
+          requestAnimationFrame(() => move(e))
+        }
+        // const mouseMoveHandler = (e) => move(e)
+        document.onmousemove = mouseMoveHandler
+        window.onmouseup = function () {
+          document.onmousemove = null
+          window.onmouseup = null
+        }
+      }
+      videoContainer.ontouchstart = (e) => {
+        e.preventDefault()
+        let touch = e.changedTouches[0]
+        let shiftX = touch.clientX - videoContainer.getBoundingClientRect().left
+        let shiftY = touch.clientY - videoContainer.getBoundingClientRect().top
+
+
+        let maxWidth = window.innerWidth - videoContainer.offsetWidth - 20
+        let maxHeight = window.innerHeight - videoContainer.offsetHeight - 20
+
+        const move = ({ pageX, pageY }) => {
+          const left = pageX - shiftX
+          const top = pageY - shiftY
+          videoContainer.style.left = (left < 20 ? 20 : left > maxWidth ? maxWidth : left) + "px"
+          videoContainer.style.top = (top < 20 ? 20 : top > maxHeight ? maxHeight : top) + "px"
+        }
+
+        const touchMoveHandler = (e) => {
+          e.preventDefault()
+          requestAnimationFrame(() => move(e.changedTouches[0]))
+        }
+        document.ontouchmove = touchMoveHandler
+        document.ontouchend = function () {
+          document.ontouchmove = null
+          document.ontouchend = null
+        }
+      }
+
+      // resizer
+      const resizer = document.getElementById("resizer")
+      resizer.onmousedown = (e) => {
+        e.stopPropagation()
+
+        const shiftX = e.clientX - videoContainer.getBoundingClientRect().left
+        const shiftY = e.clientY - videoContainer.getBoundingClientRect().top
+
+        const right = window.innerWidth - videoContainer.offsetLeft - videoContainer.offsetWidth
+        const bottom = window.innerHeight - videoContainer.offsetTop - videoContainer.offsetHeight
+
+        const maxLeft = window.innerWidth - 150 - right
+        const maxTop = window.innerHeight - 50 - bottom
+        const minLeft = 20//(maxLeft - 750 < 20) ? 20 : maxLeft - 600
+        const minTop = 20//(maxTop - 750 < 20) ? 20 : maxTop - 600
+        const move = ({ clientX, clientY }) => {
+          let left = clientX - shiftX
+          left = (left < minLeft ? minLeft : left > maxLeft ? maxLeft : left)
+          let top = clientY - shiftY
+          top = (top < minTop ? minTop : top > maxTop ? maxTop : top)
+
+          videoContainer.style.left = left + "px"
+          videoContainer.style.top = top + "px"
+
+          videoContainer.style.width = window.innerWidth - right - left + "px"
+          videoContainer.style.height = window.innerHeight - bottom - top + "px"
+        }
+
+        const mouseMoveHandler = (e) => {
+          e.preventDefault()
+          requestAnimationFrame(() => move(e))
+        }
+        // const mouseMoveHandler = (e) => move(e)
+        document.onmousemove = mouseMoveHandler
+        window.onmouseup = function () {
+          document.onmousemove = null
+          window.onmouseup = null
+        }
+      }
+      resizer.ontouchstart = (e) => {
+        e.stopPropagation()
+        e.preventDefault()
+        let touch = e.changedTouches[0]
+        const shiftX = touch.clientX - videoContainer.getBoundingClientRect().left
+        const shiftY = touch.clientY - videoContainer.getBoundingClientRect().top
+
+        const right = window.innerWidth - videoContainer.offsetLeft - videoContainer.offsetWidth
+        const bottom = window.innerHeight - videoContainer.offsetTop - videoContainer.offsetHeight
+
+        const maxLeft = window.innerWidth - 150 - right
+        const maxTop = window.innerHeight - 50 - bottom
+        const minLeft = 20//(maxLeft - 750 < 20) ? 20 : maxLeft - 600
+        const minTop = 20//(maxTop - 750 < 20) ? 20 : maxTop - 600
+        const move = ({ clientX, clientY }) => {
+          let left = clientX - shiftX
+          left = (left < minLeft ? minLeft : left > maxLeft ? maxLeft : left)
+          let top = clientY - shiftY
+          top = (top < minTop ? minTop : top > maxTop ? maxTop : top)
+
+          videoContainer.style.left = left + "px"
+          videoContainer.style.top = top + "px"
+
+          videoContainer.style.width = window.innerWidth - right - left + "px"
+          videoContainer.style.height = window.innerHeight - bottom - top + "px"
+        }
+
+        const mouseMoveHandler = (e) => {
+          e.preventDefault()
+          requestAnimationFrame(() => move(e.changedTouches[0]))
+        }
+        // const mouseMoveHandler = (e) => move(e)
+        document.ontouchmove = mouseMoveHandler
+        document.ontouchend = function () {
+          document.ontouchmove = null
+          document.ontouchend = null
+        }
+      }
+    })
+  </script>
+</body>
